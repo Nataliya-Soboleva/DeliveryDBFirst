@@ -1,0 +1,267 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="Хранилище DeliveryDBModel" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Couriers">
+          <Key>
+            <PropertyRef Name="CourierID" />
+          </Key>
+          <Property Name="CourierID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FirstName" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="LastName" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="DateOfBirth" Type="datetime" Nullable="false" />
+          <Property Name="AvailabilityRights" Type="bit" Nullable="false" />
+          <Property Name="RightsСategory" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="Orders">
+          <Key>
+            <PropertyRef Name="OrderID" />
+          </Key>
+          <Property Name="OrderID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="AddressTo" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="DescriptionOfCargo" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="OrderDate" Type="datetime" Nullable="false" />
+          <Property Name="Price" Type="float" Nullable="false" />
+          <Property Name="CourierID_CourierID" Type="int" Nullable="false" />
+          <Property Name="StatusID_OrderStatusID" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="OrderStatuses">
+          <Key>
+            <PropertyRef Name="OrderStatusID" />
+          </Key>
+          <Property Name="OrderStatusID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="OrderStatusName" Type="nvarchar(max)" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_dbo_Orders_dbo_Couriers_CourierID_CourierID">
+          <End Role="Couriers" Type="Self.Couriers" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Orders" Type="Self.Orders" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Couriers">
+              <PropertyRef Name="CourierID" />
+            </Principal>
+            <Dependent Role="Orders">
+              <PropertyRef Name="CourierID_CourierID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_Orders_dbo_OrderStatuses_StatusID_OrderStatusID">
+          <End Role="OrderStatuses" Type="Self.OrderStatuses" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Orders" Type="Self.Orders" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OrderStatuses">
+              <PropertyRef Name="OrderStatusID" />
+            </Principal>
+            <Dependent Role="Orders">
+              <PropertyRef Name="StatusID_OrderStatusID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="stp_OrderByStatusID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="StatusID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="stp_OrderInsert" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="AddressTo" Type="nvarchar(max)" Mode="In" />
+          <Parameter Name="DescriptionOfCargo" Type="nvarchar(max)" Mode="In" />
+          <Parameter Name="OrderDate" Type="datetime" Mode="In" />
+          <Parameter Name="Price" Type="float" Mode="In" />
+          <Parameter Name="CourierID" Type="int" Mode="In" />
+          <Parameter Name="StatusID" Type="int" Mode="In" />
+          <Parameter Name="OrderID" Type="int" Mode="InOut" />
+        </Function>
+        <EntityContainer Name="Хранилище DeliveryDBModelContainer">
+          <EntitySet Name="Couriers" EntityType="Self.Couriers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Orders" EntityType="Self.Orders" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="OrderStatuses" EntityType="Self.OrderStatuses" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_dbo_Orders_dbo_Couriers_CourierID_CourierID" Association="Self.FK_dbo_Orders_dbo_Couriers_CourierID_CourierID">
+            <End Role="Couriers" EntitySet="Couriers" />
+            <End Role="Orders" EntitySet="Orders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_Orders_dbo_OrderStatuses_StatusID_OrderStatusID" Association="Self.FK_dbo_Orders_dbo_OrderStatuses_StatusID_OrderStatusID">
+            <End Role="OrderStatuses" EntitySet="OrderStatuses" />
+            <End Role="Orders" EntitySet="Orders" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="DeliveryDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="DeliveryDBEntities" annotation:LazyLoadingEnabled="true" >
+          <FunctionImport Name="stp_OrderByStatusID" ReturnType="Collection(DeliveryDBModel.stp_OrderByStatusID_Result)">
+          <Parameter Name="StatusID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="stp_OrderInsert">
+            <Parameter Name="AddressTo" Mode="In" Type="String" />
+            <Parameter Name="DescriptionOfCargo" Mode="In" Type="String" />
+            <Parameter Name="OrderDate" Mode="In" Type="DateTime" />
+            <Parameter Name="Price" Mode="In" Type="Double" />
+            <Parameter Name="CourierID" Mode="In" Type="Int32" />
+            <Parameter Name="StatusID" Mode="In" Type="Int32" />
+            <Parameter Name="OrderID" Mode="InOut" Type="Int32" />
+          </FunctionImport>
+          <EntitySet Name="Couriers" EntityType="DeliveryDBModel.Couriers" />
+          <EntitySet Name="Orders" EntityType="DeliveryDBModel.Orders" />
+          <EntitySet Name="OrderStatuses" EntityType="DeliveryDBModel.OrderStatuses" />
+          <AssociationSet Name="FK_dbo_Orders_dbo_Couriers_CourierID_CourierID" Association="DeliveryDBModel.FK_dbo_Orders_dbo_Couriers_CourierID_CourierID">
+            <End Role="Couriers" EntitySet="Couriers" />
+            <End Role="Orders" EntitySet="Orders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_Orders_dbo_OrderStatuses_StatusID_OrderStatusID" Association="DeliveryDBModel.FK_dbo_Orders_dbo_OrderStatuses_StatusID_OrderStatusID">
+            <End Role="OrderStatuses" EntitySet="OrderStatuses" />
+            <End Role="Orders" EntitySet="Orders" />
+          </AssociationSet>
+        </EntityContainer>
+        <ComplexType Name="stp_OrderByStatusID_Result">
+          <Property Type="Int32" Name="OrderID" Nullable="false" />
+          <Property Type="String" Name="AddressTo" Nullable="false" />
+          <Property Type="String" Name="DescriptionOfCargo" Nullable="false" />
+          <Property Type="DateTime" Name="OrderDate" Nullable="false" Precision="23" />
+          <Property Type="Double" Name="Price" Nullable="false" />
+          <Property Type="Int32" Name="CourierID_CourierID" Nullable="false" />
+          <Property Type="Int32" Name="StatusID_OrderStatusID" Nullable="false" />
+        </ComplexType>
+        <EntityType Name="Couriers">
+          <Key>
+            <PropertyRef Name="CourierID" />
+          </Key>
+          <Property Name="CourierID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FirstName" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="LastName" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateOfBirth" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="AvailabilityRights" Type="Boolean" Nullable="false" />
+          <Property Name="RightsСategory" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Orders" Relationship="DeliveryDBModel.FK_dbo_Orders_dbo_Couriers_CourierID_CourierID" FromRole="Couriers" ToRole="Orders" />
+        </EntityType>
+        <EntityType Name="Orders">
+          <Key>
+            <PropertyRef Name="OrderID" />
+          </Key>
+          <Property Name="OrderID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AddressTo" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DescriptionOfCargo" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="OrderDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Price" Type="Double" Nullable="false" />
+          <Property Name="CourierID_CourierID" Type="Int32" Nullable="false" />
+          <Property Name="StatusID_OrderStatusID" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Couriers" Relationship="DeliveryDBModel.FK_dbo_Orders_dbo_Couriers_CourierID_CourierID" FromRole="Orders" ToRole="Couriers" />
+          <NavigationProperty Name="OrderStatuses" Relationship="DeliveryDBModel.FK_dbo_Orders_dbo_OrderStatuses_StatusID_OrderStatusID" FromRole="Orders" ToRole="OrderStatuses" />
+        </EntityType>
+        <EntityType Name="OrderStatuses">
+          <Key>
+            <PropertyRef Name="OrderStatusID" />
+          </Key>
+          <Property Name="OrderStatusID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OrderStatusName" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Orders" Relationship="DeliveryDBModel.FK_dbo_Orders_dbo_OrderStatuses_StatusID_OrderStatusID" FromRole="OrderStatuses" ToRole="Orders" />
+        </EntityType>
+        <Association Name="FK_dbo_Orders_dbo_Couriers_CourierID_CourierID">
+          <End Type="DeliveryDBModel.Couriers" Role="Couriers" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="DeliveryDBModel.Orders" Role="Orders" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Couriers">
+              <PropertyRef Name="CourierID" />
+            </Principal>
+            <Dependent Role="Orders">
+              <PropertyRef Name="CourierID_CourierID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_Orders_dbo_OrderStatuses_StatusID_OrderStatusID">
+          <End Type="DeliveryDBModel.OrderStatuses" Role="OrderStatuses" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="DeliveryDBModel.Orders" Role="Orders" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OrderStatuses">
+              <PropertyRef Name="OrderStatusID" />
+            </Principal>
+            <Dependent Role="Orders">
+              <PropertyRef Name="StatusID_OrderStatusID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="Хранилище DeliveryDBModelContainer" CdmEntityContainer="DeliveryDBEntities" >
+          <FunctionImportMapping FunctionImportName="stp_OrderByStatusID" FunctionName="Хранилище DeliveryDBModel.stp_OrderByStatusID">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="DeliveryDBModel.stp_OrderByStatusID_Result">
+                <ScalarProperty Name="OrderID" ColumnName="OrderID" />
+                <ScalarProperty Name="AddressTo" ColumnName="AddressTo" />
+                <ScalarProperty Name="DescriptionOfCargo" ColumnName="DescriptionOfCargo" />
+                <ScalarProperty Name="OrderDate" ColumnName="OrderDate" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="CourierID_CourierID" ColumnName="CourierID_CourierID" />
+                <ScalarProperty Name="StatusID_OrderStatusID" ColumnName="StatusID_OrderStatusID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="stp_OrderInsert" FunctionName="Хранилище DeliveryDBModel.stp_OrderInsert" />
+          <EntitySetMapping Name="Couriers">
+            <EntityTypeMapping TypeName="DeliveryDBModel.Couriers">
+              <MappingFragment StoreEntitySet="Couriers">
+                <ScalarProperty Name="RightsСategory" ColumnName="RightsСategory" />
+                <ScalarProperty Name="AvailabilityRights" ColumnName="AvailabilityRights" />
+                <ScalarProperty Name="DateOfBirth" ColumnName="DateOfBirth" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="CourierID" ColumnName="CourierID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Orders">
+            <EntityTypeMapping TypeName="DeliveryDBModel.Orders">
+              <MappingFragment StoreEntitySet="Orders">
+                <ScalarProperty Name="StatusID_OrderStatusID" ColumnName="StatusID_OrderStatusID" />
+                <ScalarProperty Name="CourierID_CourierID" ColumnName="CourierID_CourierID" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="OrderDate" ColumnName="OrderDate" />
+                <ScalarProperty Name="DescriptionOfCargo" ColumnName="DescriptionOfCargo" />
+                <ScalarProperty Name="AddressTo" ColumnName="AddressTo" />
+                <ScalarProperty Name="OrderID" ColumnName="OrderID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="OrderStatuses">
+            <EntityTypeMapping TypeName="DeliveryDBModel.OrderStatuses">
+              <MappingFragment StoreEntitySet="OrderStatuses">
+                <ScalarProperty Name="OrderStatusName" ColumnName="OrderStatusName" />
+                <ScalarProperty Name="OrderStatusID" ColumnName="OrderStatusID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="Нет" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
